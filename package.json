@@ -1,0 +1,24 @@
+{
+  "name": "parcel-plugin-radi",
+  "version": "0.2.0",
+  "description": "parcel plugin for radi.js",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/radi-js/parcel-plugin-radi.git"
+  },
+  "author": "Marcis Bergmanis <marcis.bergmanis@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "peerDependencies": {
+    "parcel-bundler": "^1.6.2"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "parcel-bundler": "^1.6.2"
+  }
+}
