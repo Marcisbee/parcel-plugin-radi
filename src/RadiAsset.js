@@ -55,7 +55,7 @@ module.exports = class RadiAsset extends JSAsset {
     })`
 
     // Replace new code with loaded one
-    this.contents = '/** @jsx _radi.r **/\nimport _radi from \'./../../radi\';\n' + code.trim() + '\n\n' + module;
+    this.contents = '/** @jsx _radi.r **/\nimport _radi from \'radi\';\n' + code.trim() + '\n\n' + module;
 
     // Parse through JSAsset
     return super.parse(this.contents);
