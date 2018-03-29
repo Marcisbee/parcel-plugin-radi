@@ -1,6 +1,9 @@
 const { Asset } = require('parcel-bundler');
 const JSAsset = require('parcel-bundler/src/assets/JSAsset');
 
+var babel = require('babel-core');
+var raditransform = require('./radi-transform.js');
+
 // TODO: write code parsing with babel
 
 module.exports = class RadiAsset extends JSAsset {
@@ -46,12 +49,21 @@ module.exports = class RadiAsset extends JSAsset {
       return out
     }
 
+    view = babel.transform(view, {
+      plugins: [
+        ['transform-react-jsx', {
+          pragma: '_radi.r'
+        }],
+        raditransform,
+      ]
+    }).code
+
     // Build new code
     let module = `export default _radi.component({
       props: ${ extract(/props(?:\W|)\{/, -1, '{', '}') },
       state: ${ extract(/state(?:\W|)\{/, -1, '{', '}') },
       actions: ${ extract(/actions(?:\W|)\{/, -1, '{', '}') },
-      view: (component, children) => ((${ newargs }) => { return (${ view }); })(component, children),
+      view: (component, children) => ((${ newargs }) => {const { $state:state, $props:props, $actions:actions } = component; return ${ view } })(component, children),
     })`
 
     // Replace new code with loaded one
