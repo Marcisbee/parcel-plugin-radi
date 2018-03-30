@@ -1,7 +1,14 @@
-module.exports = function({types: t}) {
+const { declare } = require("@babel/helper-plugin-utils");
+
+module.exports = declare(({types: t}, options) => {
+
+  const PRAGMA_DEFAULT = options.pragma || 'l';
+  const LISTEN_ANNOTATION_REGEX = /\*?\s*@radi-listen\s+([^\s]+)/;
+
+  let pragma = PRAGMA_DEFAULT;
 
   function listener() {
-    const expr = t.identifier('l');
+    const expr = t.identifier(pragma);
     expr.isClean = true;
     return expr;
   }
@@ -59,6 +66,14 @@ module.exports = function({types: t}) {
 
   return {
     visitor: {
+      Program(path) {
+        for (const comment of path.container.comments) {
+          const matches = LISTEN_ANNOTATION_REGEX.exec(comment.value);
+          if (matches) {
+            pragma = matches[1];
+          }
+        }
+      },
       JSXExpressionContainer(path) {
         // Handle object attribute like { style: { color: ... } }
         if (t.isObjectExpression(path.node.expression) && t.isJSXAttribute(path.parent)) {
@@ -219,4 +234,4 @@ module.exports = function({types: t}) {
     }
   }
 
-}
+})
