@@ -49,12 +49,14 @@ module.exports = class RadiAsset extends JSAsset {
       return out
     }
 
-    view = babel.transform(view, {
+    view = babel.transform('/** @radi-listen _radi.l **/'.concat(view), {
       plugins: [
         ['transform-react-jsx', {
           pragma: '_radi.r'
         }],
-        raditransform,
+        [raditransform, {
+          pragma: '_radi.l'
+        }],
       ]
     }).code
 
