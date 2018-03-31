@@ -16,7 +16,7 @@ module.exports = class RadiAsset extends JSAsset {
     var mm = view.match(/\<template(.|[\r\n])*?\>/mi)[0]
       .replace(/(\<template|\>)/g, '')
       .match(/(?:args|arguments)\=[{("]((?:.|[\r\n])*?)[})"]$/i)
-    var newargs = mm ? mm[1].replace(/\s/g, '') : 'component,children'
+    var newargs = mm ? mm[1].replace(/\s/g, '') : 'component'
 
     view = view.replace(/\<template(.|[\r\n])*?\>/, '<section>').replace(/\<\/template\>/, '</section>')
 
@@ -65,7 +65,7 @@ module.exports = class RadiAsset extends JSAsset {
       props: ${ extract(/props(?:\W|)\{/, -1, '{', '}') },
       state: ${ extract(/state(?:\W|)\{/, -1, '{', '}') },
       actions: ${ extract(/actions(?:\W|)\{/, -1, '{', '}') },
-      view: (component, children) => ((${ newargs }) => {const { $state:state, $props:props, $actions:actions } = component; return ${ view } })(component, children),
+      view: (component) => ((${ newargs }) => {const { $state:state, $props:props, $actions:actions, children } = component; return ${ view } })(component),
     })`
 
     // Replace new code with loaded one
