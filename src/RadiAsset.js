@@ -11,14 +11,16 @@ module.exports = class RadiAsset extends JSAsset {
   async parse(code) {
     // Extract view part of component
     let view = code.match(/(\<template(.|[\r\n])*?\>([\s\S]+)\<\/template\>)/gmi)[0]
-    code = code.replace(view, '')
+    if (view) {
+      code = code.replace(view, '')
 
-    var mm = view.match(/\<template(.|[\r\n])*?\>/mi)[0]
-      .replace(/(\<template|\>)/g, '')
-      .match(/(?:args|arguments)\=[{("]((?:.|[\r\n])*?)[})"]$/i)
-    var newargs = mm ? mm[1].replace(/\s/g, '') : 'component'
+      var mm = view.match(/\<template(.|[\r\n])*?\>/mi)[0]
+        .replace(/(\<template|\>)/g, '')
+        .match(/(?:args|arguments)\=[{("]((?:.|[\r\n])*?)[})"]$/i)
+      var newargs = mm ? mm[1].replace(/\s/g, '') : 'component'
 
-    view = view.replace(/\<template(.|[\r\n])*?\>/, '<section>').replace(/\<\/template\>/, '</section>')
+      view = view.replace(/\<template(.|[\r\n])*?\>/, '<section>').replace(/\<\/template\>/, '</section>')
+    }
 
     // Extracts classes and contents from code
     const extract = (find, mod, first, last, cb) => {

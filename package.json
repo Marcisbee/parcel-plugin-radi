@@ -1,6 +1,6 @@
 {
   "name": "parcel-plugin-radi",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "parcel plugin for radi.js",
   "main": "index.js",
   "repository": {

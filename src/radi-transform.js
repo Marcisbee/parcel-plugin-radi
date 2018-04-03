@@ -158,6 +158,9 @@ module.exports = declare(({types: t}, options) => {
           let gathered = [];
 
           path.traverse({
+            JSXExpressionContainer(path) {
+              path.skip();
+            },
             MemberExpression(path) {
               // This isn't root member of Object
               if (t.isMemberExpression(path.parent)) return;
