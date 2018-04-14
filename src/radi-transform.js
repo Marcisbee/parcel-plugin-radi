@@ -78,8 +78,6 @@ module.exports = declare(({types: t}, options) => {
         // Handle object attribute like { style: { color: ... } }
         if (t.isObjectExpression(path.node.expression) && t.isJSXAttribute(path.parent)) {
 
-          // TODO: Traverse through ObjectExpression > ObjectProperties
-
           path.traverse({
             ObjectProperty(path) {
               // This isn't root member of Object
@@ -99,7 +97,10 @@ module.exports = declare(({types: t}, options) => {
                     path.traverse({
                       MemberExpression(path) {
                         extracted.extract(path);
-                      }
+                      },
+                      ThisExpression(path) {
+                        extracted.unshift(path.node);
+                      },
                     });
                   }
 
@@ -108,13 +109,16 @@ module.exports = declare(({types: t}, options) => {
 
                   const DOLLAR = '$'.charCodeAt(0);
 
-                  if (extracted[0] && extracted[0].name !== 'component') return;
+                  if (extracted[0] && !t.isThisExpression(extracted[0])) return;
                   if (extracted[1] && extracted[1].value
                     && extracted[1].value.charCodeAt(0) === DOLLAR) {
                     extracted[0] = t.memberExpression(
                       extracted[0],
                       t.identifier(extracted[1].value),
                     );
+                    extracted.splice(1, 1);
+                  }
+                  if (extracted[1] && extracted[1].name !== 'state') {
                     extracted.splice(1, 1);
                   }
 
@@ -174,7 +178,10 @@ module.exports = declare(({types: t}, options) => {
                 path.traverse({
                   MemberExpression(path) {
                     extracted.extract(path);
-                  }
+                  },
+                  ThisExpression(path) {
+                    extracted.unshift(path.node);
+                  },
                 });
               }
 
@@ -183,13 +190,16 @@ module.exports = declare(({types: t}, options) => {
 
               const DOLLAR = '$'.charCodeAt(0);
 
-              if (extracted[0] && extracted[0].name !== 'component') return;
+              if (extracted[0] && !t.isThisExpression(extracted[0])) return;
               if (extracted[1] && extracted[1].value
                 && extracted[1].value.charCodeAt(0) === DOLLAR) {
                 extracted[0] = t.memberExpression(
                   extracted[0],
                   t.identifier(extracted[1].value),
                 );
+                extracted.splice(1, 1);
+              }
+              if (extracted[1] && extracted[1].name !== 'state') {
                 extracted.splice(1, 1);
               }
 

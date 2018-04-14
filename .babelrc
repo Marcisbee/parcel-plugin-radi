@@ -1,4 +1,7 @@
 {
   "presets": ["env"],
-  "plugins": ["transform-react-jsx"]
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-react-jsx"
+  ]
 }

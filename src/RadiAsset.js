@@ -6,21 +6,27 @@ var raditransform = require('./radi-transform.js');
 
 // TODO: write code parsing with babel
 
+const NODES = /<([A-Z][A-Z0-9\-]*)\b[^>]*>[\s\S]*<\/\1>/gi;
+const COMMENTS = /((?:\/\*(?:[^*]|[\r\n]|(?:\*+([^*\/]|[\r\n])))*\*+\/)|(?:\/\/.*))/g;
+// const ACTIONS = /(\@action[\s]+[a-zA-Z0-9_]+)[\s:]*(?:\(|\)|[a-zA-Z0-9_,])+[\s:]*[=>]*[\s:]*/g;
+// const DECORATORS = /\@([a-zA-Z0-9_]+)[\s]+([a-zA-Z0-9_]+[^\s:(])/g;
+// const DECORATORS = /\@(action)[\s]+([a-zA-Z0-9_]+[^\s:(])/g;
+// const FN_ARROW = /(?:\s*\(?(?:\s*\w*\s*,?\s*)*\)?\s*?=>\s*)/g;
+// const BRACKETS = /[{};]/g;
+const IMPORTS = /(import\s+([\S,* ]+|\*\s+as\s+\S+|\{[^\}]*\})(\s+from)\s+[\S]*[\s;]+|import\s+[\S,* ]+)/g;
+
 module.exports = class RadiAsset extends JSAsset {
 
   async parse(code) {
     // Extract view part of component
-    let view = code.match(/(\<template(.|[\r\n])*?\>([\s\S]+)\<\/template\>)/gmi)[0]
-    if (view) {
-      code = code.replace(view, '')
+    let noComments = code.replace(COMMENTS, '');
+    let view = noComments.match(NODES) || [];
 
-      var mm = view.match(/\<template(.|[\r\n])*?\>/mi)[0]
-        .replace(/(\<template|\>)/g, '')
-        .match(/(?:args|arguments)\=[{("]((?:.|[\r\n])*?)[})"]$/i)
-      var newargs = mm ? mm[1].replace(/\s/g, '') : 'component'
+    // Need to remove those newly found parts from code
+    code = code.replace(NODES, '');
 
-      view = view.replace(/\<template(.|[\r\n])*?\>/, '<section>').replace(/\<\/template\>/, '</section>')
-    }
+    let imports = noComments.match(IMPORTS) || [];
+    code = code.replace(IMPORTS, '');
 
     // Extracts classes and contents from code
     const extract = (find, mod, first, last, cb) => {
@@ -51,27 +57,76 @@ module.exports = class RadiAsset extends JSAsset {
       return out
     }
 
-    view = babel.transform('/** @radi-listen _radi.l **/'.concat(view), {
+    // Build new code
+    const classState = extract(/state(?:\s|:)+\{/, -1, '{', '}');
+    const classOn = extract(/on(?:\s|:)+\{/, -1, '{', '}');
+
+
+    // TODO: Check only base expressions
+    // var regExp = /[\{\}\;]/g, match;
+    // var L = '{'.charCodeAt(0);
+    // var R = '}'.charCodeAt(0);
+    //
+    // var baseExpressions = [];
+    // var baseExpressionPos = [];
+    //
+    // var count = 0;
+    // var pos = {l:null, r:null};
+    //
+    // while (match = regExp.exec(code)) {
+    //   if (match[0] === '{') {
+    //     if (pos.l === null) pos.l = match.index
+    //     count += 1
+    //   }
+    //   if (match[0] === '}') {
+    //     count -= 1
+    //   }
+    //
+    //   if (count == 0) {
+    //     pos.r = match.index;
+    //     baseExpressions.push(code.substring(pos.l + 1, pos.r));
+    //     baseExpressionPos.push([pos.l + 1, pos.r]);
+    //     pos = {l:null, r:null};
+    //     count = 0;
+    //   }
+    // }
+    //
+    // console.log('baseExpressions', baseExpressionPos);
+
+
+    // Build new code
+    let module = `/** @radi-listen _radi.l **/
+    export default class extends _radi.component {
+      constructor() {
+        super();
+        this.state = ${ classState || {} }
+        this.on = ${ classOn || {} }
+      }
+
+      ${ code.trim() }
+
+      view() {
+        const component = this;
+        return <template>\n${ view.join('') }\n</template>;
+      }
+    }`
+
+    module = babel.transform(module, {
       plugins: [
+        'transform-decorators-legacy',
         ['transform-react-jsx', {
           pragma: '_radi.r'
         }],
         [raditransform, {
           pragma: '_radi.l'
-        }],
+        }]
       ]
     }).code
 
-    // Build new code
-    let module = `export default _radi.component({
-      props: ${ extract(/props(?:\W|)\{/, -1, '{', '}') },
-      state: ${ extract(/state(?:\W|)\{/, -1, '{', '}') },
-      actions: ${ extract(/actions(?:\W|)\{/, -1, '{', '}') },
-      view: (component) => ((${ newargs }) => {const { $state:state, $props:props, $actions:actions, children } = component; return ${ view } })(component),
-    })`
+    // console.log(module)
 
     // Replace new code with loaded one
-    this.contents = '/** @jsx _radi.r **/\nimport _radi from \'radi\';\n' + code.trim() + '\n\n' + module;
+    this.contents = '/** @jsx _radi.r **/\nimport _radi from \'radi\';\nconst action = _radi.action;\n' + imports.join('\n').trim() + '\n\n' + module;
 
     // Parse through JSAsset
     return super.parse(this.contents);
