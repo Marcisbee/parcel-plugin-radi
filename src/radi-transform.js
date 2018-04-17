@@ -109,7 +109,9 @@ module.exports = declare(({types: t}, options) => {
 
                   const DOLLAR = '$'.charCodeAt(0);
 
-                  if (extracted[0] && !t.isThisExpression(extracted[0])) return;
+                  if (extracted[0]
+                    && !t.isThisExpression(extracted[0])
+                    && extracted[0].name !== 'component') return;
                   if (extracted[1] && extracted[1].value
                     && extracted[1].value.charCodeAt(0) === DOLLAR) {
                     extracted[0] = t.memberExpression(
@@ -190,7 +192,9 @@ module.exports = declare(({types: t}, options) => {
 
               const DOLLAR = '$'.charCodeAt(0);
 
-              if (extracted[0] && !t.isThisExpression(extracted[0])) return;
+              if (extracted[0]
+                && !t.isThisExpression(extracted[0])
+                && extracted[0].name !== 'component') return;
               if (extracted[1] && extracted[1].value
                 && extracted[1].value.charCodeAt(0) === DOLLAR) {
                 extracted[0] = t.memberExpression(
