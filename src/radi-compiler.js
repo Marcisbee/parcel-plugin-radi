@@ -35,7 +35,7 @@ const template = ({
   /** @jsx _radi.r **/
   /** @radi-listen _radi_listen **/
 
-  import _radi from '../../radi';
+  import _radi from 'radi';
   const action = _radi.action;
   const _radi_listen = _radi.listen;
 
