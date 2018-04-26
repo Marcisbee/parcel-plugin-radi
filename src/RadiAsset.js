@@ -6,7 +6,7 @@ const radiParser = require("./radi-compiler.js");
 var babel = require('babel-core');
 var raditransform = require('./radi-transform.js');
 
-// TODO: write code parsing with babel
+// TODO: Build real source maps for template
 
 module.exports = class RadiAsset extends JSAsset {
   constructor(name, pkg, options) {
@@ -26,6 +26,7 @@ module.exports = class RadiAsset extends JSAsset {
       sourceMapTarget: this.relativeName,
       sourceMaps: true,
       plugins: [
+        'transform-pipeline-operator',
         'transform-decorators-legacy',
         ['transform-react-jsx', {
           pragma: '_radi.r'

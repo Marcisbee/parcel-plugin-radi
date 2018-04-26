@@ -18,7 +18,11 @@ const definitions = {
     custom: input => input.replace(/this\.state/g, 'component.state'),
   },
   method: {
-    regex: /(?:(@[\w]+|[\w]+)*[^\b])(\w+)\s*\([^)]*\)\s*({(?:{[^{}]*(?:{[^{}]*}|[\s\S])*?[^{}]*}|[\s\S])*?})/,
+    // regex: /(?:(@[\w]+|[\w]+)*[^\b])(\w+)\s*\([^)]*\)\s*({(?:{[^{}]*(?:{[^{}]*}|[\s\S])*?[^{}]*}|[\s\S])*?})/,
+    regex: /(?:(?:@[\w]+|[\w]+)*[^\b])(?:\w+)\s*\([^)]*\)\s*\{/,
+    extract: [-1, '{', '}'],
+    matchToo: true,
+    multiple: true,
   },
   // method: /(?:(@[\w]+|[\w]+)*[^\b])(\w+)\s*\([^)]*\)\s*({(?:{[^{}]*(?:{[^{}]*}|[\s\S])*?[^{}]*}|[\s\S])*?})/,
   // function: /(\w+)\s*\([^)]*\)\s*({(?:{[^{}]*(?:{[^{}]*}|[\s\S])*?[^{}]*}|[\s\S])*?})/,
@@ -137,11 +141,15 @@ const parse = (name, code, cb) => {
       }
     }
 
-    let out = CODE.substring(indexState + mod, endIndex)
+    let out = CODE.substring(indexState + (definitions[type].matchToo ? -(match[0]).length : mod), endIndex)
 
     let tokenID = saveToken(type, ['state'], out, out)
 
     let input = CODE.substr(0, match.index).concat(tokenID).concat(CODE.substring(endIndex, CODE.length))
+
+    if (definitions[type].multiple && CODE.match(find)) {
+      input = extract(type, input)
+    }
 
     return input
   }
