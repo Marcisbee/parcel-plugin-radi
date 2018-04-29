@@ -41,6 +41,7 @@ const template = ({
 
   import _radi from 'radi';
   const action = _radi.action;
+  const subscribe = _radi.subscribe;
   const _radi_listen = _radi.listen;
 
   ${outside || ''}
