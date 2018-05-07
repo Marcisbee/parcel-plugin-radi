@@ -54,6 +54,7 @@ module.exports = declare(({types: t}, options) => {
   }
 
   Array.prototype.extract = function (path) {
+    if (!path) return;
     if (t.isIdentifier(path.node.property)) {
       this.unshift(t.stringLiteral(path.node.property.name));
     } else {
