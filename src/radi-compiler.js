@@ -14,12 +14,12 @@ const definitions = {
   },
   node: {
     // regex: /(?:{\/\*[^\*]+?\*\/\}|<([A-Za-z][A-Za-z0-9-_]*?)(?:\/>|\b[^>]*>([^<\/]*?|[\s\S]+?)<\/\1>))/,
-    regex: /(?:{\/\*[^\*]+?\*\/\}|<([A-Za-z][A-Za-z0-9-_]*?)(?:\/>|\b[^>]*>(?:[^{]+({[\s\S]*[^}]+})[^<\\]+|([^<\/]*?|[\s\S]+?))<\/\1>))/,
+    regex: /[^\( \{\'\"](?:{\/\*[^\*]+?\*\/\}|<([A-Za-z][A-Za-z0-9-_]*?)(?:\/>|\b[^>]*>(?:[^{]+({[\s\S]*[^}]+})[^<\\]+|([^<\/]*?|[\s\S]+?))<\/\1>))/,
     custom: input => input.replace(/this\.state/g, 'component.state'),
   },
   method: {
     // regex: /(?:(@[\w]+|[\w]+)*[^\b])(\w+)\s*\([^)]*\)\s*({(?:{[^{}]*(?:{[^{}]*}|[\s\S])*?[^{}]*}|[\s\S])*?})/,
-    regex: /(?:(?:@[\w]+|[\w]+)*[^\b])(?:\w+)\s*\([^)]*\)\s*\{/,
+    regex: /(?:(?:@[\w.]+|[\w]+)*[^\b])(?:\w+)\s*\([^)]*\)\s*\{/,
     extract: [-1, '{', '}'],
     matchToo: true,
     multiple: true,
@@ -42,6 +42,7 @@ const template = ({
   import _radi from 'radi';
   const action = _radi.action;
   const subscribe = _radi.subscribe;
+  const worker = _radi.worker;
   const _radi_listen = _radi.listen;
 
   ${outside || ''}
