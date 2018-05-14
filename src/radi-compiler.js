@@ -142,6 +142,10 @@ const parse = (name, code, cb) => {
         break;
       }
     }
+    if (endIndex < 0) {
+      throw(new Error('Cannot find end for ' + type + ' in "' + name + '": ' + match[0].replace(/\n/g, '') + '...'))
+      return CODE
+    }
 
     let out = CODE.substring(indexState + (definitions[type].matchToo ? -(match[0]).length : mod), endIndex)
 
