@@ -131,7 +131,7 @@ const parse = (name, code, cb) => {
     var indexState = match.index + (match[0]).length
 
     var diff = 1
-    var endIndex = 0
+    var endIndex = -1
 
     for (var i = indexState; i <= CODE.length; i++) {
       if (CODE.charCodeAt(i) === L) diff += 1
