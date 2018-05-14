@@ -4,7 +4,7 @@ const Logger = require("parcel-bundler/src/Logger");
 const radiParser = require("./radi-compiler.js");
 
 var babel = require('babel-core');
-var raditransform = require('./radi-transform.js');
+var raditransform = require('babel-plugin-transform-radi-listen');
 
 // TODO: Build real source maps for template
 
