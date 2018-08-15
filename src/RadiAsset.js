@@ -4,9 +4,6 @@ const Logger = require("parcel-bundler/src/Logger");
 const radiParser = require("./radi-compiler.js");
 
 var babel = require('babel-core');
-var raditransform = require('babel-plugin-transform-radi-listen');
-
-// TODO: Build real source maps for template
 
 module.exports = class RadiAsset extends JSAsset {
   constructor(name, pkg, options) {
@@ -18,7 +15,10 @@ module.exports = class RadiAsset extends JSAsset {
 
   async parse(code) {
 
-    let parsed = radiParser(this.basename.split('.')[0], code)
+    const name = this.basename.split('.')[0];
+    let parsed = code.replace(/(?:^|\s)*(class[\s]*\{)/, (match, text) => {
+      return match.replace(text, 'export default class '+name+' extends Radi.Component {');
+    })
 
     let transformed = babel.transform(parsed, {
       filename: this.basename,
@@ -26,13 +26,16 @@ module.exports = class RadiAsset extends JSAsset {
       sourceMapTarget: this.relativeName,
       sourceMaps: true,
       plugins: [
-        'transform-pipeline-operator',
-        'transform-decorators-legacy',
-        ['transform-react-jsx', {
-          pragma: '_radi.r'
+        [require('babel-plugin-transform-class-properties')],
+        [require('babel-plugin-syntax-pipeline').default],
+        [require('babel-plugin-transform-pipeline-operator')],
+        [require('babel-plugin-transform-decorators-legacy').default],
+        [radiParser, {}],
+        [require('babel-plugin-transform-react-jsx'), {
+          pragma: 'Radi.r'
         }],
-        [raditransform, {
-          pragma: '_radi.l'
+        [require('babel-plugin-transform-radi-listen'), {
+          pragma: 'Radi.l'
         }]
       ]
     })
