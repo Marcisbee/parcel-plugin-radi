@@ -1,0 +1,11 @@
+languaje: node_js
+node_js:
+- '6'
+deploy:
+  provider: npm
+  email: marcisbergmanis@gmail.com
+  api_key:
+    secure: Iyrc5yM5cr5X9y2Z7SWHZBkRXaTnK5eqpqOzih8T+sYuHzUhIbJXv+pMCU2DgnXuCSm3bwjG15+zGNsHawuaQJsIZl6RSe6jS/pOC5p3zd3Etgr9HBtrOElsqdF6ugL7FTJk/qF91FYTwr8RHl5XpBmdwB52VhG/0oqcAaqVlTGJ/+P1xfiELgbKz38qGD2zaozl66F6mWdFZzkYDvGoJLHawi0VMIWa4SYDSko5au6q1jnsuUzQsXqfsumAtIgvES0cMUFBhg9Va9PFoCieoa+sXCzfDeOeBGTeRolInOfNCQZKX+AbQwx7voS2fyj3nkRZEiJPAJjNoMj1kzqzFew/stQXs0/EIG4B6BZo9x4wQXBnCM9kPfQ8zuFpJTsCU7F281XDdRVJXpNQP4CCwhvPQcyzZJ+9vM9sbnHdYYfVuKHRQR2nSqU/NfXk96uH82CiI1su7R4r1IW3ZJk2MprTgK8fHIYtDZQFiwLPuXylGlvwziC8RySDlomkGEp7mr9Wc6ycTm+zudzXlAZwfTMWYDIPzzLs0fvAgJqYDjoN4HU/3CXfJvrNFg6fd/0zsWkIx3/49ZwtfzAJTFp9e6/GuFElwLohDNZy7ck18EN/Xp1Niq1MC1MK0/YFseHt0Z3jyQihTjZgNjhythlpb/YiY+esXLeqp8Oua98EP6k=
+  on:
+    tags: true
+    branch: master
