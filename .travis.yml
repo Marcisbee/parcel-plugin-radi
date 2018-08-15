@@ -1,3 +1,14 @@
+languaje: node_js
+node_js:
+- '6'
+cache:
+  bundler: true
+  directories:
+  - node_modules
+install:
+- npm install
+script:
+- npm run ci
 deploy:
   provider: npm
   email: marcisbergmanis@gmail.com

@@ -9,6 +9,12 @@
   },
   "author": "Marcis Bergmanis <marcis.bergmanis@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "test:watch": "jest --watch",
+    "test": "jest",
+    "test:ci": "npm run test -- --ci",
+    "ci": "npm run test:ci"
+  },
   "dependencies": {
     "@babel/helper-plugin-utils": "^7.0.0-beta.46",
     "babel-core": "^6.26.3",
@@ -23,5 +29,8 @@
   },
   "engines": {
     "node": ">=8"
+  },
+  "devDependencies": {
+    "jest": "^23.5.0"
   }
 }
